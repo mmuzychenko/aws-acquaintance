@@ -1,15 +1,16 @@
 package com.aws.acquaintance.image_service.controller.rest;
 
+import com.aws.acquaintance.image_service.model.Metadata;
 import com.aws.acquaintance.image_service.service.ImageService;
 import com.aws.acquaintance.image_service.service.MetadataService;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -37,31 +38,28 @@ public class ImageController {
 
     @SneakyThrows
     @PostMapping(value = "/upload")
-    public ResponseEntity<?> uploadImage(@RequestParam(value = "file") MultipartFile file) {
-//            , @AuthenticationPrincipal Jwt jwt) {
+    public ResponseEntity<?> uploadImage(@RequestParam(value = "file") MultipartFile file, @RequestParam(defaultValue = "File description") String description
+            , @AuthenticationPrincipal Jwt jwt) {
 
         String fileName = file.getOriginalFilename();
 
         log.info("--> ImageRestController: upload image");
-//        log.info("--> ImageRestController: jwt" + jwt);
-//
-//        String uploadedBy = (String) jwt.getClaims().get("preferred_username");
-//        String email = (String) jwt.getClaims().get("email");
+        log.info("--> ImageRestController: jwt" + jwt);
 
-//        log.info("--> ImageRestController: uploadedBy" + uploadedBy);
-//        log.info("--> ImageRestController: email" + email);
+        String uploadedBy = (String) jwt.getClaims().get("preferred_username");
+        String email = (String) jwt.getClaims().get("email");
 
-//        Metadata metadata = metadataService.extractMetadata(multipartFile, description, uploadedBy);
-//        log.info("--> ImageRestController: metadata" + metadata);
+        log.info("--> ImageRestController: uploadedBy" + uploadedBy);
+        log.info("--> ImageRestController: email" + email);
+
+        Metadata metadata = metadataService.extractMetadata(file, description, uploadedBy);
+        log.info("--> ImageRestController: metadata" + metadata);
 
         String resultMessage = "";
 
         try {
-//            metadataService.validateIfAlreadyExists(metadata);
-//
-//            //TODO: Instant.now().toString() -> Instant.now()
-//            //TODO: decide what to do with metadata
-//            metadataService.save(metadata);
+            metadataService.validateIfAlreadyExists(metadata);
+            metadataService.save(metadata);
 
             imageService.upload(fileName, file.getInputStream());
 
@@ -73,20 +71,32 @@ public class ImageController {
         }
     }
 
+    @DeleteMapping("/delete/{fileName}")
+    public ResponseEntity<String> deleteImage(@PathVariable String fileName) {
+        boolean isFileDeleted = imageService.delete(fileName);
 
-//    @DeleteMapping("/delete/{imageName}")
-//    public ResponseEntity<String> deleteImage(@PathVariable String fileName) {
-//        boolean isFileDeleted = imageService.delete(fileName);
-//
-//        //TODO: decide what to do with metadata
-//        //TODO: check if the file was realy deleted (existed before and disappear then)
-//        boolean isMetadataDeleted = metadataService.delete(fileName);
-//        String result = "";
-//        if (isFileDeleted) {
-//            result = "File was deleted successfully!";
-//        } else {
-//            result = "File was NOT deleted!";
-//        }
-//        return new ResponseEntity<>(result, HttpStatus.OK);
-//    }
+        metadataService.delete(fileName);
+        String result = "";
+        if (isFileDeleted) {
+            result = "File was deleted successfully!";
+        } else {
+            result = "File was NOT deleted!";
+        }
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @GetMapping("/download/{fileName}")
+    public ResponseEntity<ByteArrayResource> downloadImage(@PathVariable String fileName) {
+        log.info("--> Image Controller: download image");
+
+        byte[] data = imageService.downloadRest(fileName);
+        ByteArrayResource resource = new ByteArrayResource(data);
+        return ResponseEntity
+                .ok()
+                .contentLength(data.length)
+                .header("Content-type", "application/octet-stream")
+                .header("Content-disposition", "attachment; filename=\"" + fileName + "\"")
+                .body(resource);
+    }
+
 }

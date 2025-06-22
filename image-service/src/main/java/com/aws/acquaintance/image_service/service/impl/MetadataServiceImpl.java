@@ -84,10 +84,10 @@ public class MetadataServiceImpl implements MetadataService {
         String fileName = multipartFile.getOriginalFilename();
 
         return Metadata.builder()
-                .fileName(fileName)
-                .fileDescription(description)
-                //.createdBy(createdBy)
-                //.createdAt(createdAt)
+                .name(fileName)
+                .description(description)
+//                .createdBy(createdBy)
+//                .createdAt(createdAt)
                 .uploadedBy(uploadedBy)
                 .uploadedAt(Instant.now())
                 .build();

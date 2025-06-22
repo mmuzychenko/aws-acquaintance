@@ -4,60 +4,18 @@ import com.aws.acquaintance.image_service.model.Metadata;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface MetadataRepository extends MongoRepository<Metadata, String> {
 
-    Metadata findByFileName(String fileName);
-/*
-    //TODO: refactor to use real DB
+    Metadata findByName(String name);
 
-    public static final List<Metadata> metadataList = new ArrayList<>();
+    List<Metadata> findByUploadedBy(String uploadedBy);
 
+    boolean existsByName(String name);
 
-    public  boolean save(Metadata metadata) {
-        metadataList.add(metadata);
-        return false;
-    }
+    void deleteByName(String name);
 
-
-    public Metadata getByFileName(String fileName) {
-        return metadataList.stream()
-                .filter(m -> fileName.equals(m.getFileName()))
-                .findFirst()
-                .orElse(null);
-    }
-
-    public List<Metadata> getByUserId(String userId) {
-        return metadataList.stream()
-                .filter(m -> userId.equals(m.getUploadedBy()))
-                .collect(Collectors.toList());
-    }
-
-    public boolean update(String fileName, Metadata metadata) {
-        Metadata metadataToUpdate = getByFileName(fileName);
-        if (metadataToUpdate != null) {
-            metadataToUpdate.setId(metadata.getId());
-            metadataToUpdate.setFileName(metadata.getFileName());
-            metadataToUpdate.setFileDescription(metadata.getFileDescription());
-            metadataToUpdate.setUploadedBy(metadata.getUploadedBy());
-            metadataToUpdate.setUploadedAt(metadata.getUploadedAt());
-            return true;
-        }
-        return false;
-    }
-
-    public boolean delete(String fileName) {
-        Metadata metadataToDelete = getByFileName(fileName);
-        if (metadataToDelete != null) {
-            return metadataList.remove(metadataToDelete);
-        }
-        return false;
-    }
-
-    public boolean existByFileName(String fileName) {
-        return metadataList.stream()
-                .anyMatch(m -> fileName.equals(m.getFileName()));
-    }
- */
 }
 
