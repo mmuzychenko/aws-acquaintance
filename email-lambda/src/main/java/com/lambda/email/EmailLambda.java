@@ -45,18 +45,6 @@ public class EmailLambda implements RequestHandler<SNSEvent, Object> {
 
         String subject = request.getRecords().get(0).getSNS().getSubject();
 
-//        switch (subject) {
-//            case SNS_SUBJECT_UPLOAD_CONFIRMATION: {
-//                text.append("\n FILE UPLOADED !");
-//            }
-//            case SNS_SUBJECT_DELETE_CONFIRMATION: {
-//                text.append("\n FILE DELETED !");
-//            }
-//            default: {
-//                throw new IllegalArgumentException("Unsupported subject of SNS notification!");
-//            }
-//        }
-
         if (SNS_SUBJECT_UPLOAD_CONFIRMATION.equals(subject)) {
             text.append("\n FILE UPLOADED !");
         } else if (SNS_SUBJECT_DELETE_CONFIRMATION.equals(subject)) {
