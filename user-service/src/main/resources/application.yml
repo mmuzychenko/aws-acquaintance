@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    url: ${RDS_POSTGRES_URL:jdbc:postgresql://localhost:5432/users}
+    username: ${RDS_POSTGRES_USERNAME:admin}
+    password: ${RDS_POSTGRES_PASSWORD:password}
+  jpa:
+    hibernate:
+      ddl-auto: update
+aws:
+  sns:
+    topic-arn: ${SNS_TOPIC_ARN}
+  stepfunctions:
+    state-machine-arn: ${STEP_FUNCTION_ARN}
+  secretsmanager:
+    secret-id: ${USER_SERVICE_SECRET_ID}
+jwt:
+  secret: ${JWT_SECRET:your-secure-secret-key}
+server:
+  port: 8080
