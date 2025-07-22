@@ -89,25 +89,25 @@ public class EmailLambda implements RequestHandler<SNSEvent, Object> {
     }
 
     //TODO: remove this after testing
-    public static void main(String[] args) {
-        SNSEvent.SNS sns = new SNSEvent.SNS();
-        sns.setMessage("this is a message");
-
-        SNSEvent.SNSRecord snsRecord = new SNSEvent.SNSRecord();
-        snsRecord.setSns(sns);
-
-        List<SNSEvent.SNSRecord> snsRecordList = new ArrayList<>();
-        snsRecordList.add(snsRecord);
-
-        SNSEvent request = new SNSEvent();
-        request.setRecords(snsRecordList);
-
-        String text = "--> request=" + request + "\n"
-                + "--> request.getRecords()=" + request.getRecords() + "\n"
-                + "--> request.getRecords().get(0)=" + request.getRecords().get(0) + "\n"
-                + "--> request.getRecords().get(0).getSNS()=" + request.getRecords().get(0).getSNS() + "\n"
-                + "--> request.getRecords().get(0).getSNS().getMessage()=" + request.getRecords().get(0).getSNS().getMessage();
-
-        System.out.println(text);
-    }
+//    public static void main(String[] args) {
+//        SNSEvent.SNS sns = new SNSEvent.SNS();
+//        sns.setMessage("this is a message");
+//
+//        SNSEvent.SNSRecord snsRecord = new SNSEvent.SNSRecord();
+//        snsRecord.setSns(sns);
+//
+//        List<SNSEvent.SNSRecord> snsRecordList = new ArrayList<>();
+//        snsRecordList.add(snsRecord);
+//
+//        SNSEvent request = new SNSEvent();
+//        request.setRecords(snsRecordList);
+//
+//        String text = "--> request=" + request + "\n"
+//                + "--> request.getRecords()=" + request.getRecords() + "\n"
+//                + "--> request.getRecords().get(0)=" + request.getRecords().get(0) + "\n"
+//                + "--> request.getRecords().get(0).getSNS()=" + request.getRecords().get(0).getSNS() + "\n"
+//                + "--> request.getRecords().get(0).getSNS().getMessage()=" + request.getRecords().get(0).getSNS().getMessage();
+//
+//        System.out.println(text);
+//    }
 }
