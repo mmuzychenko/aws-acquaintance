@@ -5,6 +5,7 @@ import com.aws.acquaintance.user_service.model.User;
 import com.aws.acquaintance.user_service.service.UserService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,18 +14,17 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api")
 public class UserController {
 
-    private final UserService userService;
-    private final AWSStepFunctions stepFunctionsClient;
-    private final ObjectMapper objectMapper;
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private AWSStepFunctions stepFunctionsClient;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Value("${aws.stepfunctions.state-machine}")
     private String stateMachineArn;
-
-    public UserController(UserService userService, AWSStepFunctions stepFunctionsClient, ObjectMapper objectMapper) {
-        this.userService = userService;
-        this.stepFunctionsClient = stepFunctionsClient;
-        this.objectMapper = objectMapper;
-    }
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody User user) {
@@ -52,6 +52,7 @@ public class UserController {
         }
     }
 
+    // TODO: 8/10/2025 Delete after test
 //    @PostMapping("/confirm/{fileId}")
 //    public ResponseEntity<?> confirmFile(@PathVariable String fileId) {
 //        String executionArn = findExecutionArn(fileId);

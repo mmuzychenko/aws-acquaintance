@@ -5,6 +5,7 @@ import com.amazonaws.services.sns.model.PublishRequest;
 import com.aws.acquaintance.image_service.service.ImageService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,9 +20,15 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api")
 public class ImageController {
-    private final ImageService imageService;
-    private final AmazonSNS snsClient;
-    private final ObjectMapper objectMapper;
+
+    @Autowired
+    private ImageService imageService;
+
+    @Autowired
+    private AmazonSNS snsClient;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Value("${aws.sns.upload-topic}")
     private String uploadTopicArn;
@@ -32,11 +39,6 @@ public class ImageController {
     @Value("${jwt.secret}")
     private String jwtSecret;
 
-    public ImageController(ImageService imageService, AmazonSNS snsClient, ObjectMapper objectMapper) {
-        this.imageService = imageService;
-        this.snsClient = snsClient;
-        this.objectMapper = objectMapper;
-    }
 
     @PostMapping("/upload")
     public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
@@ -54,6 +56,7 @@ public class ImageController {
             Map<String, String> message = new HashMap<>();
             message.put("fileId", fileId);
             message.put("fileName", file.getOriginalFilename());
+            message.put("recipient", "");
             snsClient.publish(new PublishRequest()
                     .withTopicArn(uploadTopicArn)
                     .withMessage(objectMapper.writeValueAsString(message)));

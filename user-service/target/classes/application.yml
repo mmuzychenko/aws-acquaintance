@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: ${RDS_POSTGRES_URL:jdbc:postgresql://localhost:5432/users}
-    username: ${RDS_POSTGRES_USERNAME:admin}
-    password: ${RDS_POSTGRES_PASSWORD:password}
+    url: ${RDS_POSTGRES_URL:jdbc:postgresql://localhost:5432/yalantis}
+    username: ${RDS_POSTGRES_USERNAME:postgres}
+    password: ${RDS_POSTGRES_PASSWORD:postgres}
   jpa:
     hibernate:
       ddl-auto: update

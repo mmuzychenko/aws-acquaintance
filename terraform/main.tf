@@ -270,7 +270,10 @@ resource "aws_lambda_function" "notify_upload" {
   handler = "com.lambda.email.EmailLambda"
   runtime = "java17"
   environment {
-    variables = { REGION = var.region }
+    variables = {
+      REGION = var.region
+      APPLICATION_EMAIL_SENDER = var.email
+    }
   }
 }
 #

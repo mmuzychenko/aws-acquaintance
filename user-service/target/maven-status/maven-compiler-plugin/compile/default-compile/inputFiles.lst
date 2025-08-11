@@ -6,4 +6,5 @@ C:\Users\mmuzychenko\Idea Projects\yalantis\aws-acquaintance\user-service\src\ma
 C:\Users\mmuzychenko\Idea Projects\yalantis\aws-acquaintance\user-service\src\main\java\com\aws\acquaintance\user_service\model\User.java
 C:\Users\mmuzychenko\Idea Projects\yalantis\aws-acquaintance\user-service\src\main\java\com\aws\acquaintance\user_service\repository\UserRepository.java
 C:\Users\mmuzychenko\Idea Projects\yalantis\aws-acquaintance\user-service\src\main\java\com\aws\acquaintance\user_service\service\UserService.java
+C:\Users\mmuzychenko\Idea Projects\yalantis\aws-acquaintance\user-service\src\main\java\com\aws\acquaintance\user_service\config\AWSStepFunctionConfig.java
 C:\Users\mmuzychenko\Idea Projects\yalantis\aws-acquaintance\user-service\src\main\java\com\aws\acquaintance\user_service\security\JwtAuthentication.java

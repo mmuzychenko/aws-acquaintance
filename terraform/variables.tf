@@ -5,3 +5,7 @@ variable "region" {
 variable "environment" {
   default = "prod"
 }
+
+variable "email" {
+  default = "obonemax@gmail.com"
+}

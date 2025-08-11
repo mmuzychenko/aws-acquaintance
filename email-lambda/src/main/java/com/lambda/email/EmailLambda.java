@@ -8,8 +8,6 @@ import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder;
 import com.amazonaws.services.simpleemail.model.*;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Logger;
 
 public class EmailLambda implements RequestHandler<SNSEvent, Object> {
@@ -24,47 +22,32 @@ public class EmailLambda implements RequestHandler<SNSEvent, Object> {
 
     @Override
     public Boolean handleRequest(SNSEvent request, Context context) {
-        //String email = request.getRecords().get(0).getSNS().getMessage();
-        String email = "obonemax@gmail.com" ;
 
-        LOGGER.info("--> request=" + request);
-        LOGGER.info("--> request.getRecords()=" + request.getRecords());
-        LOGGER.info("--> request.getRecords().get(0)=" + request.getRecords().get(0));
-        LOGGER.info("--> request.getRecords().get(0).getSNS()=" + request.getRecords().get(0).getSNS());
-        LOGGER.info("--> request.getRecords().get(0).getSNS().getSubject()=" + request.getRecords().get(0).getSNS().getSubject());
-        LOGGER.info("--> request.getRecords().get(0).getSNS().getMessage()=" + request.getRecords().get(0).getSNS().getMessage());
-
-        StringBuilder text = new StringBuilder()
-                .append("--> request=").append(request).append("\n")
-                .append("--> request.getRecords()=").append(request.getRecords()).append("\n")
-                .append("--> request.getRecords().get(0)=").append(request.getRecords().get(0)).append("\n")
-                .append("--> request.getRecords().get(0).getSNS()=").append(request.getRecords().get(0).getSNS()).append("\n")
-                .append("--> request.getRecords().get(0).getSNS().getSubject()=").append(request.getRecords().get(0).getSNS().getSubject()).append("\n")
-                .append("--> request.getRecords().get(0).getSNS().getMessage()=").append(request.getRecords().get(0).getSNS().getMessage());
-
-
-        String subject = request.getRecords().get(0).getSNS().getSubject();
-
-        if (SNS_SUBJECT_UPLOAD_CONFIRMATION.equals(subject)) {
-            text.append("\n FILE UPLOADED !");
-        } else if (SNS_SUBJECT_DELETE_CONFIRMATION.equals(subject)) {
-            text.append("\n FILE DELETED !");
-        } else {
-            throw new IllegalArgumentException("Unsupported subject of SNS notification!");
+        for (SNSEvent.SNSRecord snsRecord : request.getRecords()) {
+            String subject = snsRecord.getSNS().getSubject();
+            String text;
+            if (SNS_SUBJECT_UPLOAD_CONFIRMATION.equals(subject)) {
+                text = "FILE UPLOADED !";
+            } else if (SNS_SUBJECT_DELETE_CONFIRMATION.equals(subject)) {
+                text = "FILE DELETED !";
+            } else {
+                throw new IllegalArgumentException("Unsupported subject of SNS notification!");
+            }
+            sendEmail(snsRecord.getSNS().getMessage(), EMAIL_SUBJECT, text);
         }
-        sendEmail(email, EMAIL_SUBJECT, text.toString());
+
         return Boolean.TRUE;
     }
 
 
     public static void sendEmail(String emailTo, String subject, String text) {
 
+        String emailFrom = System.getenv("EMAIL_SENDER");
+
         try {
             AmazonSimpleEmailService client =
                     AmazonSimpleEmailServiceClientBuilder.standard()
-                            // Replace US_WEST_2 with the AWS Region you're using for
-                            // Amazon SES.
-                            .withRegion(Regions.EU_WEST_3).build();
+                            .withRegion(Regions.EU_NORTH_1).build();
 
             SendEmailRequest request = new SendEmailRequest()
                     .withDestination(
@@ -75,7 +58,7 @@ public class EmailLambda implements RequestHandler<SNSEvent, Object> {
                                             .withCharset("UTF-8").withData(text)))
                             .withSubject(new Content()
                                     .withCharset("UTF-8").withData(subject)))
-                    .withSource("obonemax@gmail.com");
+                    .withSource(emailFrom);
 
             // Comment or remove the next line if you are not using a
             // configuration set
@@ -88,26 +71,4 @@ public class EmailLambda implements RequestHandler<SNSEvent, Object> {
         }
     }
 
-    //TODO: remove this after testing
-//    public static void main(String[] args) {
-//        SNSEvent.SNS sns = new SNSEvent.SNS();
-//        sns.setMessage("this is a message");
-//
-//        SNSEvent.SNSRecord snsRecord = new SNSEvent.SNSRecord();
-//        snsRecord.setSns(sns);
-//
-//        List<SNSEvent.SNSRecord> snsRecordList = new ArrayList<>();
-//        snsRecordList.add(snsRecord);
-//
-//        SNSEvent request = new SNSEvent();
-//        request.setRecords(snsRecordList);
-//
-//        String text = "--> request=" + request + "\n"
-//                + "--> request.getRecords()=" + request.getRecords() + "\n"
-//                + "--> request.getRecords().get(0)=" + request.getRecords().get(0) + "\n"
-//                + "--> request.getRecords().get(0).getSNS()=" + request.getRecords().get(0).getSNS() + "\n"
-//                + "--> request.getRecords().get(0).getSNS().getMessage()=" + request.getRecords().get(0).getSNS().getMessage();
-//
-//        System.out.println(text);
-//    }
 }
